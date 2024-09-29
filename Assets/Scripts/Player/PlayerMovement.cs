@@ -1,25 +1,20 @@
-using System;
 using UnityEngine;
 using static PlayerAnimations;
-
-[RequireComponent(typeof(CharacterController))]
-[RequireComponent(typeof(PlayerAnimations))]
 
 public class PlayerMovement : MonoBehaviour
 {
     readonly private string Horizontal = "Horizontal";
     readonly private string Vertical = "Vertical";
 
-    private CharacterController _characterController;
-
+    private Rigidbody2D _rigidbody;
     private Vector2 _movement;
 
-    private float _movementSpeed = 6f;
+    private float _movementSpeed = 350f;
     private bool _isFlipped = true;
 
     private void Awake()
     {
-        _characterController = GetComponent<CharacterController>();
+        _rigidbody = GetComponent<Rigidbody2D>();
     }
 
     private void FixedUpdate()
@@ -40,16 +35,17 @@ public class PlayerMovement : MonoBehaviour
         Flip();
         IsMoving(_movement.sqrMagnitude);
 
-        _movement *= Time.deltaTime;
-        _characterController.Move(_movement);
+        _movement *= Time.fixedDeltaTime;
+        _rigidbody.velocity = _movement;
     }
+
 
     private void Flip()
     {
         if ((_movement.x > 0 && !_isFlipped) || (_movement.x < 0 && _isFlipped))
-        {           
+        {
             _isFlipped = !_isFlipped;
-            transform.Rotate(0f, 180f,0f);
+            transform.Rotate(0f, 180f, 0f);
         }
     }
 }
